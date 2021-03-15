@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.sql.SQLOutput;
 
 public class MulticastReceiver {
 
@@ -17,10 +19,15 @@ public class MulticastReceiver {
             s.joinGroup(group);
 
             byte[] buffer = new byte[1000];
-            System.out.println("Waiting for messages");
-            DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-            s.receive(messageIn);
-            System.out.println("Message: " + new String(messageIn.getData())+ " from: "+ messageIn.getAddress());
+            DatagramPacket  messageIn = new DatagramPacket(buffer, buffer.length);
+            for (int i = 0; i < 5; i++) {
+                while(true) {
+                    s.receive(messageIn);
+                    int data = ByteBuffer.wrap(messageIn.getData()).getInt();
+                    System.out.println("Message: " + data + " from: " + messageIn.getAddress());
+                }
+            }
+
             s.leaveGroup(group);
         }
         catch (SocketException e){

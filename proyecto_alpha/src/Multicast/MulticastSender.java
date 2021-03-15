@@ -1,10 +1,13 @@
 package Multicast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,17 +24,18 @@ public class MulticastSender {
 
             group = InetAddress.getByName("228.5.6.7");
             s = new MulticastSocket(6789);
-
             s.joinGroup(group);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(bos);
 
             while (true){
-
-                String message= (new Date()).toString();
-
-                byte [] m = message.getBytes();
+                int message= (int) (Math.random()*10);
+                out.writeInt(message);
+                out.close();
+                byte[] m = bos.toByteArray();
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
                 s.send(messageOut);
-                System.out.println("Heartbeat");
+                System.out.println(message);
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
