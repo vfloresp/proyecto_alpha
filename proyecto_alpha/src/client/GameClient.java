@@ -19,8 +19,12 @@ public class GameClient {
             registry = LocateRegistry.getRegistry("localhost");
             Registro servidorRegistro = (Registro) registry.lookup(name);
             RegistroJugador menuRegistro = new RegistroJugador();
-            System.out.println(servidorRegistro.registro("Chuchito"));
-        } catch (RemoteException | NotBoundException e) {
+            while(menuRegistro.getNombre() == null){
+                Thread.sleep(1000);
+                System.out.println("esperando");
+            }
+            System.out.println(servidorRegistro.registro(menuRegistro.getNombre()));
+        } catch (RemoteException | NotBoundException | InterruptedException e) {
             e.printStackTrace();
         }
     }

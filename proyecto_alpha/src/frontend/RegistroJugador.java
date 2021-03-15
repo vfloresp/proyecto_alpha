@@ -6,8 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 public class RegistroJugador extends JFrame{
+    public String nombre;
 
     public RegistroJugador(){
         JFrame Inicioframe= new JFrame("¡Pegale al monstruo!");
@@ -18,8 +20,8 @@ public class RegistroJugador extends JFrame{
         JButton registrar = new JButton("Aceptar");
         registrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                String nombre = textField.getText();
-                System.out.println(nombre);
+                nombre = textField.getText();
+                dispose();
             }
         });
         add(descripcion);
@@ -29,6 +31,10 @@ public class RegistroJugador extends JFrame{
         setSize(300,300);
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    public String getNombre() {
+        return nombre;
     }
 
     /*public static void main(String[] args){
