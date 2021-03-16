@@ -1,8 +1,7 @@
 package server;
 
-
-import interfaces.Player;
 import interfaces.Registro;
+import interfaces.Player;
 import java.net.*;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -18,7 +17,7 @@ public class GamerServer implements Registro{
     private int countPlayer = 0;
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","/home/vfloresp/Documents/ITAM/proyecto_alpha/proyecto_alpha/src/server/server.policy");
+        System.setProperty("java.security.policy","D:/tabat/Documents/12/ProyectoAlpha/proyecto_alpha/proyecto_alpha/src/server/server.policy");
         MulticastSocket s =null;
         InetAddress group = null;
 
@@ -42,7 +41,7 @@ public class GamerServer implements Registro{
             s.joinGroup(group);
             //Enviar cada 5s un nuevo monstruo
             while (true){
-                String message= Integer.toString((int) (Math.random()*10 +1));
+                String message= Integer.toString((int) (Math.random()*(10-1)+1));
                 byte[] m = message.getBytes();
 
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);

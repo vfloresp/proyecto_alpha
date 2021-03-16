@@ -1,7 +1,6 @@
 package client;
 
-import interfaces.Registro;
-import interfaces.Player;
+import interfaces.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.rmi.AccessException;
@@ -15,7 +14,7 @@ import java.io.IOException;
 public class GameClient {
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","/home/vfloresp/Documents/ITAM/proyecto_alpha/proyecto_alpha/src/client/client.policy");
+        System.setProperty("java.security.policy","D:/tabat/Documents/12/ProyectoAlpha/proyecto_alpha/proyecto_alpha/src/client/client.policy");
         MulticastSocket s =null;
         String name = "Registro";
         Registry registry = null;
