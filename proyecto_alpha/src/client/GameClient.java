@@ -51,7 +51,8 @@ public class GameClient {
                 tablero.seleccionar(data);
                 //Esperar respuesta jugador
                 int dummy = 0;
-                while (!tablero.getAccion()) {
+                long startTime = System.currentTimeMillis();
+                while (!tablero.getAccion() && (System.currentTimeMillis()-startTime)<4000) {
                     System.out.println("esperando");
                     //dummy ++;
                 }
