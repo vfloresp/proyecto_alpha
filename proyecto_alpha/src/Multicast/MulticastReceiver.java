@@ -20,15 +20,13 @@ public class MulticastReceiver {
 
             byte[] buffer = new byte[1000];
             DatagramPacket  messageIn = new DatagramPacket(buffer, buffer.length);
-            for (int i = 0; i < 5; i++) {
-                while(true) {
-                    s.receive(messageIn);
-                    int data = ByteBuffer.wrap(messageIn.getData()).getInt();
-                    System.out.println("Message: " + data + " from: " + messageIn.getAddress());
-                }
+
+            while(true) {
+                s.receive(messageIn);
+                System.out.println("Message: " + new String(messageIn.getData())+ " from: " + messageIn.getAddress());
             }
 
-            s.leaveGroup(group);
+
         }
         catch (SocketException e){
             System.out.println("Socket: " + e.getMessage());

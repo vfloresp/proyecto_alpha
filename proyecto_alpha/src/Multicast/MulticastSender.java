@@ -29,13 +29,14 @@ public class MulticastSender {
             DataOutputStream out = new DataOutputStream(bos);
 
             while (true){
-                int message= (int) (Math.random()*10);
-                out.writeInt(message);
-                out.close();
-                byte[] m = bos.toByteArray();
+                String message= Integer.toString((int) (Math.random()*10 +1));
+
+                byte[] m = message.getBytes();
+
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
                 s.send(messageOut);
                 System.out.println(message);
+
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
