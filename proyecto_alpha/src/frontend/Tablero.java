@@ -3,6 +3,8 @@ package frontend;
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Array;
+import java.net.DatagramPacket;
+import java.net.MulticastSocket;
 
 public class Tablero extends JFrame {
     JCheckBox  hoyo1 = new JCheckBox("Hoyo 1" );
@@ -37,23 +39,22 @@ public class Tablero extends JFrame {
 
     //Función para seleccionar un hoyo del tablero
     public void seleccionar(String i){
+
         System.out.println("Tablero: "+i);
-        if(i.equals("1")){
-            hoyo1.setSelected(true);
-        }else if(i.equals("2")){
-            hoyo2.setSelected(true);
-        };
-        /*switch (i) {
-            case 1 -> hoyo1.setSelected(true);
-            case 2 -> hoyo2.setSelected(true);
-            case 3 -> hoyo3.setSelected(true);
-            case 4 -> hoyo4.setSelected(true);
-            case 5 -> hoyo5.setSelected(true);
-            case 6 -> hoyo6.setSelected(true);
-            case 7 -> hoyo7.setSelected(true);
-            case 8 -> hoyo8.setSelected(true);
-            case 9 -> hoyo9.setSelected(true);
-        }*/
+            //hoyo1.setSelected(true);
+
+
+       switch (i) {
+            case "1" -> hoyo1.setSelected(true);
+            case "2" -> hoyo2.setSelected(true);
+            case "3" -> hoyo3.setSelected(true);
+            case "4" -> hoyo4.setSelected(true);
+            case "5" -> hoyo5.setSelected(true);
+            case "6" -> hoyo6.setSelected(true);
+            case "7" -> hoyo7.setSelected(true);
+            case "8" -> hoyo8.setSelected(true);
+            case "9" -> hoyo9.setSelected(true);
+        }
 
     }
 

@@ -1,6 +1,8 @@
 package client;
 
 import interfaces.*;
+
+import java.io.ByteArrayInputStream;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.rmi.AccessException;
@@ -10,6 +12,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class GameClient {
 
@@ -42,8 +45,10 @@ public class GameClient {
             Tablero tablero = new Tablero();
             while(true) {
                 s.receive(messageIn);
-                System.out.println("Gamer server: " + new String(messageIn.getData()));
-                tablero.seleccionar(new String(messageIn.getData()));
+                String data = new String(messageIn.getData(), 0, messageIn.getLength());
+                System.out.println("Gamer server: " + data);
+                tablero.seleccionar(data);
+
                 //actualizar tablero
             }
 
