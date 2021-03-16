@@ -8,13 +8,15 @@ public class Player implements Serializable{
     private int puertoMultiCast;
     private String grupoMultiCast;
     private int puntuacion;
+    private int id;
 
-    public Player(String nombre){
+    public Player(String nombre, int id){
         this.nombre = nombre;
         this.puertoTCP = 7896;
         this.puertoMultiCast = 6789;
         this.puntuacion = 0;
         this.grupoMultiCast ="228.5.6.7";
+        this.id = id;
     }
 
     public String getNombre() {
