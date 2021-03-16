@@ -17,7 +17,7 @@ public class GamerServer implements Registro{
     private int countPlayer = 0;
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","D:/tabat/Documents/12/ProyectoAlpha/proyecto_alpha/proyecto_alpha/src/server/server.policy");
+        System.setProperty("java.security.policy","/home/vfloresp/Documents/ITAM/proyecto_alpha/proyecto_alpha/src/server/server.policy");
         MulticastSocket s =null;
         InetAddress group = null;
 

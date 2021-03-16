@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class GameClient {
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","D:/tabat/Documents/12/ProyectoAlpha/proyecto_alpha/proyecto_alpha/src/client/client.policy");
+        System.setProperty("java.security.policy","/home/vfloresp/Documents/ITAM/proyecto_alpha/proyecto_alpha/src/client/client.policy");
         MulticastSocket s =null;
         String name = "Registro";
         Registry registry = null;
@@ -28,10 +28,9 @@ public class GameClient {
             RegistroJugador menuRegistro = new RegistroJugador();
             while(menuRegistro.getNombre() == null){
                 Thread.sleep(1000);
-                System.out.println("esperando");
             }
             Player nuevoJugador = servidorRegistro.registro(menuRegistro.getNombre());
-            System.out.println(servidorRegistro.registro(menuRegistro.getNombre()));
+            System.out.println("Bienvendio " + nuevoJugador.getNombre() + "!");
 
             //Suscripcion a multicast
             InetAddress group = InetAddress.getByName(nuevoJugador.getGrupoMultiCast()); // destination multicast group
@@ -45,11 +44,22 @@ public class GameClient {
             Tablero tablero = new Tablero();
             while(true) {
                 s.receive(messageIn);
+                tablero.limpiarTablero();
+                tablero.setAccion(false);
                 String data = new String(messageIn.getData(), 0, messageIn.getLength());
-                System.out.println("Gamer server: " + data);
-                tablero.seleccionar(data);
-
                 //actualizar tablero
+                tablero.seleccionar(data);
+                //Esperar respuesta jugador
+                int dummy = 0;
+                while (!tablero.getAccion()) {
+                    System.out.println("esperando");
+                    //dummy ++;
+                }
+                if(tablero.validarAccion(data)){
+                    System.out.println("respuesta correcta");
+                }else{
+                    System.out.println("respuesta incorrecta");
+                }
             }
 
         } catch (RemoteException | NotBoundException | InterruptedException | UnknownHostException e) {
