@@ -49,6 +49,7 @@ public class GamerServer implements Registro{
             //VARIABLES TCPSERVER
             int serverPort = 7896;
             ServerSocket listenSocket = new ServerSocket(serverPort);
+            listenSocket.setSoTimeout(500);
 
 
             //Enviar cada 5s un nuevo monstruo
@@ -56,17 +57,23 @@ public class GamerServer implements Registro{
             while (true) {
                 sleep(10);
                 if(countPlayer>0) {
-                    sleep(5000);
+                    sleep(1000);
                     String message = Integer.toString((int) (Math.random() * (10 - 1) + 1));
                     byte[] m = message.getBytes();
 
                     DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
                     s.send(messageOut);
                     System.out.println("mensaje enviado: " + message);
-                    //long startTime = System.currentTimeMillis();
-                    Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
-                    Connection c = new Connection(clientSocket);
-                    c.start();
+                    long startTime = System.currentTimeMillis();
+                    while((System.currentTimeMillis()-startTime)<5000) {
+                        try {
+                            Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
+                            Connection c = new Connection(clientSocket);
+                            c.start();
+                        }catch (java.io.InterruptedIOException e){
+                            System.out.println("esperando respuetas");
+                        }
+                    }
                 }
             }
 
@@ -113,10 +120,9 @@ class Connection extends Thread {
     public void run(){
         try {
             int idPlayer;
-            //while(idPlayer != -1){
             idPlayer = in.readInt();
             System.out.println("mensaje recibido: "+ idPlayer);
-            //}
+
         }
         catch(EOFException e) {
             System.out.println("EOF:"+e.getMessage());
