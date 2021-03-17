@@ -1,15 +1,17 @@
 package server;
 
-import interfaces.Registro;
 import interfaces.Player;
+import interfaces.Registro;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.net.*;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,9 +19,10 @@ public class GamerServer implements Registro{
     private int countPlayer = 0;
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","/home/vfloresp/Documents/ITAM/proyecto_alpha/proyecto_alpha/src/server/server.policy");
+        System.setProperty("java.security.policy","C:/Users/susy_/IdeaProjects/ProyectoAlphaV1/src/server/server.policy");
         MulticastSocket s =null;
         InetAddress group = null;
+        Socket st = null;
 
         if(System.getSecurityManager()==null){
             System.setSecurityManager(new SecurityManager());
@@ -39,6 +42,11 @@ public class GamerServer implements Registro{
             group = InetAddress.getByName("228.5.6.7");
             s = new MulticastSocket(6789);
             s.joinGroup(group);
+
+            //VARIABLES TCPSERVER
+            int serverPort = 7896;
+            ServerSocket listenSocket = new ServerSocket(serverPort);
+
             //Enviar cada 5s un nuevo monstruo
             while (true){
                 String message= Integer.toString((int) (Math.random()*(10-1)+1));
@@ -46,12 +54,16 @@ public class GamerServer implements Registro{
 
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
                 s.send(messageOut);
-                System.out.println(message);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(GamerServer.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                //System.out.println(message);
+                boolean mensajeRecibido=false;
+                long startTime = System.currentTimeMillis();
+                //Thread.sleep(5000);
+                //while((System.currentTimeMillis()-startTime)<5000) {//true modificar
+                     System.out.println("En espera...");
+                    Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
+                    Connection c = new Connection(clientSocket);
+                    c.start();
+                //}
             }
 
 
@@ -80,3 +92,40 @@ public class GamerServer implements Registro{
         return new Player(nombre, countPlayer);
     }
 }
+
+class Connection extends Thread {
+    DataInputStream in;
+    DataOutputStream out;
+    Socket clientSocket;
+    public Connection (Socket aClientSocket) {
+        try {
+            clientSocket = aClientSocket;
+            in = new DataInputStream(clientSocket.getInputStream());
+            out =new DataOutputStream(clientSocket.getOutputStream());
+        } catch(IOException e)  {System.out.println("Conexión: "+e.getMessage());}
+    }
+
+    @Override
+    public void run(){
+        try {
+            int idPlayer=0;
+            //while(idPlayer != -1){
+                idPlayer = in.readInt();
+            System.out.println(idPlayer);
+            //}
+        }
+        catch(EOFException e) {
+            System.out.println("EOF:"+e.getMessage());
+        }
+        catch(IOException e) {
+            System.out.println("IO:"+e.getMessage());
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e){
+                System.out.println(e);
+            }
+        }
+    }
+}
+

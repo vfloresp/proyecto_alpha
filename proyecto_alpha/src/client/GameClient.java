@@ -1,23 +1,24 @@
 package client;
 
-import interfaces.*;
+import frontend.RegistroJugador;
+import frontend.Tablero;
+import interfaces.Player;
+import interfaces.Registro;
 
-import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.net.*;
-import java.nio.ByteBuffer;
-import java.rmi.AccessException;
-import frontend.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.io.IOException;
-import java.util.Arrays;
 
 public class GameClient {
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","/home/vfloresp/Documents/ITAM/proyecto_alpha/proyecto_alpha/src/client/client.policy");
+        System.setProperty("java.security.policy","C:/Users/susy_/IdeaProjects/ProyectoAlphaV1/src/client/client.policy");
         MulticastSocket s =null;
         String name = "Registro";
         Registry registry = null;
@@ -36,6 +37,13 @@ public class GameClient {
             InetAddress group = InetAddress.getByName(nuevoJugador.getGrupoMultiCast()); // destination multicast group
             s = new MulticastSocket(nuevoJugador.getPuertoMultiCast());
             s.joinGroup(group);
+
+            //VARIABLES TCPSERVER
+            Socket sT = null;
+            int serverPort = nuevoJugador.getPuertoTCP();
+            sT = new Socket("localhost", serverPort);
+            DataInputStream in = new DataInputStream( sT.getInputStream());
+            DataOutputStream out = new DataOutputStream( sT.getOutputStream());
 
             byte[] buffer = new byte[1000];
             DatagramPacket  messageIn = new DatagramPacket(buffer, buffer.length);
@@ -56,8 +64,12 @@ public class GameClient {
                     System.out.println("esperando");
                     //dummy ++;
                 }
+
                 if(tablero.validarAccion(data)){
+                    //MENSAJE TCP SERVIDOR
                     System.out.println("respuesta correcta");
+                    out.writeInt(nuevoJugador.getId());
+
                 }else{
                     System.out.println("respuesta incorrecta");
                 }
@@ -73,3 +85,4 @@ public class GameClient {
         }
     }
 }
+
