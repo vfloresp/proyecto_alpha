@@ -12,13 +12,17 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
 
 import static java.lang.Thread.*;
 
 public class GamerServer implements Registro{
-    private static int countPlayer = 0;
+    //private static ArrayList<Player> players = new ArrayList<Player>();
+    private static Map<Integer,Player> players = new HashMap<Integer,Player>();
 
     public static void main(String[] args){
 
@@ -56,11 +60,11 @@ public class GamerServer implements Registro{
             System.out.println("Esperando jugadores");
             while (true) {
                 sleep(10);
-                if(countPlayer>0) {
+                if(!players.isEmpty()) {
                     sleep(1000);
+                    
                     String message = Integer.toString((int) (Math.random() * (10 - 1) + 1));
                     byte[] m = message.getBytes();
-
                     DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
                     s.send(messageOut);
                     System.out.println("mensaje enviado: " + message);
@@ -70,6 +74,10 @@ public class GamerServer implements Registro{
                             Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
                             Connection c = new Connection(clientSocket);
                             c.start();
+                            while(c.getIdPlayer() == -1){
+                            }
+                            System.out.println("respuesta run " +c.getIdPlayer());
+                            darPunto(c.getIdPlayer());
                         }catch (java.io.InterruptedIOException e){
                             System.out.println("esperando respuetas");
                         }
@@ -95,12 +103,22 @@ public class GamerServer implements Registro{
         }
     }
 
-
+    public static void darPunto(int idPlayer){
+        Player play = players.get(idPlayer);
+        play.setPuntuacion(play.getPuntuacion()+1);
+    }
 
     @Override
     public Player registro(String nombre) throws RemoteException {
-        countPlayer ++;
-        return new Player(nombre, countPlayer);
+        int idPlayer;
+        if(players.isEmpty()){
+            idPlayer = 1;
+        }else {
+            idPlayer = players.size() + 1;
+        }
+        Player newPlayer = new Player(nombre, idPlayer);
+        players.put(newPlayer.getId(), newPlayer);
+        return newPlayer;
     }
 }
 
@@ -108,6 +126,7 @@ class Connection extends Thread {
     DataInputStream in;
     DataOutputStream out;
     Socket clientSocket;
+    int idPlayer = -1;
     public Connection (Socket aClientSocket) {
         try {
             clientSocket = aClientSocket;
@@ -119,10 +138,8 @@ class Connection extends Thread {
     @Override
     public void run(){
         try {
-            int idPlayer;
             idPlayer = in.readInt();
-            System.out.println("mensaje recibido: "+ idPlayer);
-
+            //System.out.println("mensaje recibido: "+ idPlayer);
         }
         catch(EOFException e) {
             System.out.println("EOF:"+e.getMessage());
@@ -136,6 +153,10 @@ class Connection extends Thread {
                 System.out.println(e);
             }
         }
+    }
+
+    public int getIdPlayer() {
+        return idPlayer;
     }
 }
 
