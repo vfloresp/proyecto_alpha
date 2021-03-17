@@ -19,7 +19,8 @@ public class GamerServer implements Registro{
     private int countPlayer = 0;
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","C:/Users/susy_/IdeaProjects/ProyectoAlphaV1/src/server/server.policy");
+
+        System.setProperty("java.security.policy","D:\\tabat\\Documents\\12\\ProyectoAlpha\\proyecto_alpha\\proyecto_alpha\\src\\server\\server.policy");
         MulticastSocket s =null;
         InetAddress group = null;
         Socket st = null;
@@ -47,6 +48,10 @@ public class GamerServer implements Registro{
             int serverPort = 7896;
             ServerSocket listenSocket = new ServerSocket(serverPort);
 
+            Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
+            Connection c = new Connection(clientSocket);
+            c.start();
+
             //Enviar cada 5s un nuevo monstruo
             while (true){
                 String message= Integer.toString((int) (Math.random()*(10-1)+1));
@@ -59,13 +64,10 @@ public class GamerServer implements Registro{
                 long startTime = System.currentTimeMillis();
                 //Thread.sleep(5000);
                 //while((System.currentTimeMillis()-startTime)<5000) {//true modificar
-                     System.out.println("En espera...");
-                    Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
-                    Connection c = new Connection(clientSocket);
-                    c.start();
+                //System.out.println("En espera...");
+
                 //}
             }
-
 
         } catch (RemoteException | UnknownHostException e) {
             e.printStackTrace();
@@ -82,7 +84,6 @@ public class GamerServer implements Registro{
             }
         }
     }
-
 
 
 
@@ -120,11 +121,11 @@ class Connection extends Thread {
         catch(IOException e) {
             System.out.println("IO:"+e.getMessage());
         } finally {
-            try {
+            /*try {
                 clientSocket.close();
             } catch (IOException e){
                 System.out.println(e);
-            }
+            }*/
         }
     }
 }

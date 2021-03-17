@@ -18,10 +18,11 @@ import java.rmi.registry.Registry;
 public class GameClient {
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","C:/Users/susy_/IdeaProjects/ProyectoAlphaV1/src/client/client.policy");
+        System.setProperty("java.security.policy","D:\\tabat\\Documents\\12\\ProyectoAlpha\\proyecto_alpha\\proyecto_alpha\\src\\client\\client.policy");
         MulticastSocket s =null;
         String name = "Registro";
         Registry registry = null;
+        Socket sT = null;
         try {
             //Registro de un nuevo jugador
             registry = LocateRegistry.getRegistry("localhost");
@@ -39,7 +40,7 @@ public class GameClient {
             s.joinGroup(group);
 
             //VARIABLES TCPSERVER
-            Socket sT = null;
+
             int serverPort = nuevoJugador.getPuertoTCP();
             sT = new Socket("localhost", serverPort);
             DataInputStream in = new DataInputStream( sT.getInputStream());
@@ -58,21 +59,23 @@ public class GameClient {
                 //actualizar tablero
                 tablero.seleccionar(data);
                 //Esperar respuesta jugador
-                int dummy = 0;
+
                 long startTime = System.currentTimeMillis();
                 while (!tablero.getAccion() && (System.currentTimeMillis()-startTime)<4000) {
-                    System.out.println("esperando");
-                    //dummy ++;
-                }
 
+                }
+                //System.out.println(tablero.validarAccion(data));
                 if(tablero.validarAccion(data)){
                     //MENSAJE TCP SERVIDOR
                     System.out.println("respuesta correcta");
                     out.writeInt(nuevoJugador.getId());
-
                 }else{
                     System.out.println("respuesta incorrecta");
                 }
+
+
+
+
             }
 
         } catch (RemoteException | NotBoundException | InterruptedException | UnknownHostException e) {
@@ -81,7 +84,12 @@ public class GameClient {
             e.printStackTrace();
         }
         finally {
-            if(s != null) s.close();
+            if(s != null ) {
+                s.close();
+
+            }
+
+
         }
     }
 }
