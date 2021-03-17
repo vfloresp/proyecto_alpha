@@ -15,12 +15,14 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.lang.Thread.*;
+
 public class GamerServer implements Registro{
-    private int countPlayer = 0;
+    private static int countPlayer = 0;
 
     public static void main(String[] args){
 
-        System.setProperty("java.security.policy","D:\\tabat\\Documents\\12\\ProyectoAlpha\\proyecto_alpha\\proyecto_alpha\\src\\server\\server.policy");
+        System.setProperty("java.security.policy","/home/vfloresp/Documents/ITAM/proyecto_alpha/proyecto_alpha/src/server/server.policy");
         MulticastSocket s =null;
         InetAddress group = null;
         Socket st = null;
@@ -48,32 +50,43 @@ public class GamerServer implements Registro{
             int serverPort = 7896;
             ServerSocket listenSocket = new ServerSocket(serverPort);
 
-            Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
-            Connection c = new Connection(clientSocket);
-            c.start();
+            //Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
+            //Connection c = new Connection(clientSocket);
+
 
             //Enviar cada 5s un nuevo monstruo
-            while (true){
-                String message= Integer.toString((int) (Math.random()*(10-1)+1));
-                byte[] m = message.getBytes();
 
-                DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
-                s.send(messageOut);
-                //System.out.println(message);
-                boolean mensajeRecibido=false;
-                long startTime = System.currentTimeMillis();
-                //Thread.sleep(5000);
-                //while((System.currentTimeMillis()-startTime)<5000) {//true modificar
-                //System.out.println("En espera...");
+            while (true) {
+                System.out.println("count player "+countPlayer);
+                if(countPlayer>0) {
+                    sleep(5000);
+                    String message = Integer.toString((int) (Math.random() * (10 - 1) + 1));
+                    byte[] m = message.getBytes();
 
-                //}
+                    DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
+                    s.send(messageOut);
+                    System.out.println("mensaje enviado: " + message);
+                    //System.out.println(message);
+                    boolean mensajeRecibido = false;
+                    long startTime = System.currentTimeMillis();
+                    //c = new Connection(clientSocket);
+                    Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
+                    Connection c = new Connection(clientSocket);
+
+                    //while((System.currentTimeMillis()-startTime)<5000) {//true modificar
+                    //System.out.println("En espera...");
+
+                    //}
+                }
             }
 
         } catch (RemoteException | UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
             if(s != null){
                 try {
                     s.leaveGroup(group);
@@ -109,10 +122,10 @@ class Connection extends Thread {
     @Override
     public void run(){
         try {
-            int idPlayer=0;
+            int idPlayer;
             //while(idPlayer != -1){
-                idPlayer = in.readInt();
-            System.out.println(idPlayer);
+            idPlayer = in.readInt();
+            System.out.println("mensaje recibido: "+ idPlayer);
             //}
         }
         catch(EOFException e) {
@@ -121,11 +134,11 @@ class Connection extends Thread {
         catch(IOException e) {
             System.out.println("IO:"+e.getMessage());
         } finally {
-            /*try {
+            try {
                 clientSocket.close();
             } catch (IOException e){
                 System.out.println(e);
-            }*/
+            }
         }
     }
 }

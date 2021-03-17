@@ -18,7 +18,7 @@ import java.rmi.registry.Registry;
 public class GameClient {
 
     public static void main(String[] args){
-        System.setProperty("java.security.policy","D:\\tabat\\Documents\\12\\ProyectoAlpha\\proyecto_alpha\\proyecto_alpha\\src\\client\\client.policy");
+        System.setProperty("java.security.policy","/home/vfloresp/Documents/ITAM/proyecto_alpha/proyecto_alpha/src/client/client.policy");
         MulticastSocket s =null;
         String name = "Registro";
         Registry registry = null;
@@ -42,9 +42,7 @@ public class GameClient {
             //VARIABLES TCPSERVER
 
             int serverPort = nuevoJugador.getPuertoTCP();
-            sT = new Socket("localhost", serverPort);
-            DataInputStream in = new DataInputStream( sT.getInputStream());
-            DataOutputStream out = new DataOutputStream( sT.getOutputStream());
+
 
             byte[] buffer = new byte[1000];
             DatagramPacket  messageIn = new DatagramPacket(buffer, buffer.length);
@@ -68,6 +66,9 @@ public class GameClient {
                 if(tablero.validarAccion(data)){
                     //MENSAJE TCP SERVIDOR
                     System.out.println("respuesta correcta");
+                    sT = new Socket("localhost", serverPort);
+                    DataInputStream in = new DataInputStream( sT.getInputStream());
+                    DataOutputStream out = new DataOutputStream( sT.getOutputStream());
                     out.writeInt(nuevoJugador.getId());
                 }else{
                     System.out.println("respuesta incorrecta");
