@@ -40,9 +40,7 @@ public class GameClient {
             s.joinGroup(group);
 
             //VARIABLES TCPSERVER
-
             int serverPort = nuevoJugador.getPuertoTCP();
-
 
             byte[] buffer = new byte[1000];
             DatagramPacket  messageIn = new DatagramPacket(buffer, buffer.length);
@@ -62,16 +60,16 @@ public class GameClient {
                 while (!tablero.getAccion() && (System.currentTimeMillis()-startTime)<4000) {
 
                 }
-                //System.out.println(tablero.validarAccion(data));
+                //MENSAJE TCP SERVIDOR
+                sT = new Socket("localhost", serverPort);
+                DataInputStream in = new DataInputStream( sT.getInputStream());
+                DataOutputStream out = new DataOutputStream( sT.getOutputStream());
                 if(tablero.validarAccion(data)){
-                    //MENSAJE TCP SERVIDOR
                     System.out.println("respuesta correcta");
-                    sT = new Socket("localhost", serverPort);
-                    DataInputStream in = new DataInputStream( sT.getInputStream());
-                    DataOutputStream out = new DataOutputStream( sT.getOutputStream());
                     out.writeInt(nuevoJugador.getId());
                 }else{
                     System.out.println("respuesta incorrecta");
+                    out.writeInt(0);
                 }
 
 

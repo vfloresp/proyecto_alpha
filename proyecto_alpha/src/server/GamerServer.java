@@ -50,14 +50,11 @@ public class GamerServer implements Registro{
             int serverPort = 7896;
             ServerSocket listenSocket = new ServerSocket(serverPort);
 
-            //Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
-            //Connection c = new Connection(clientSocket);
-
 
             //Enviar cada 5s un nuevo monstruo
-
+            System.out.println("Esperando jugadores");
             while (true) {
-                System.out.println("count player "+countPlayer);
+                sleep(10);
                 if(countPlayer>0) {
                     sleep(5000);
                     String message = Integer.toString((int) (Math.random() * (10 - 1) + 1));
@@ -66,17 +63,10 @@ public class GamerServer implements Registro{
                     DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
                     s.send(messageOut);
                     System.out.println("mensaje enviado: " + message);
-                    //System.out.println(message);
-                    boolean mensajeRecibido = false;
-                    long startTime = System.currentTimeMillis();
-                    //c = new Connection(clientSocket);
+                    //long startTime = System.currentTimeMillis();
                     Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
                     Connection c = new Connection(clientSocket);
-
-                    //while((System.currentTimeMillis()-startTime)<5000) {//true modificar
-                    //System.out.println("En espera...");
-
-                    //}
+                    c.start();
                 }
             }
 
