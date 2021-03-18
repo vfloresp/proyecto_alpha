@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.ArrayList;
 
 import static java.lang.Thread.*;
 
@@ -82,7 +81,7 @@ public class GamerServer implements Registro{
 
 
                     try {
-                        Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
+                        Socket clientSocket = listenSocket.accept();
                         Connection c = new Connection(clientSocket);
                         c.start();
                         while(c.getIdPlayer() == -1){
