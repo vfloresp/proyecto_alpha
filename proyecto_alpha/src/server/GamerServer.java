@@ -1,5 +1,6 @@
 package server;
 
+import frontend.Ganador;
 import interfaces.Player;
 import interfaces.Registro;
 
@@ -21,8 +22,8 @@ import java.util.ArrayList;
 import static java.lang.Thread.*;
 
 public class GamerServer implements Registro{
-    //private static ArrayList<Player> players = new ArrayList<Player>();
     private static Map<Integer,Player> players = new HashMap<Integer,Player>();
+    private static int puntuacionGanadora = 3;
 
     public static void main(String[] args){
 
@@ -62,7 +63,16 @@ public class GamerServer implements Registro{
                 sleep(10);
                 if(!players.isEmpty()) {
                     sleep(1000);
-                    
+                    Player hayGanador = checarGanador();
+                    if(hayGanador != null){
+                        System.out.println("El ganador es "+hayGanador.getNombre());
+                        reiniciarPartida();
+                        String message = "El ganador es " + hayGanador.getNombre();
+                        byte[] m = message.getBytes();
+                        DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
+                        s.send(messageOut);
+                        sleep(5000);
+                    }
                     String message = Integer.toString((int) (Math.random() * (10 - 1) + 1));
                     byte[] m = message.getBytes();
                     DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
@@ -77,7 +87,8 @@ public class GamerServer implements Registro{
                             while(c.getIdPlayer() == -1){
                             }
                             System.out.println("respuesta run " +c.getIdPlayer());
-                            darPunto(c.getIdPlayer());
+                            if(c.getIdPlayer() != 0)
+                                darPunto(c.getIdPlayer());
                         }catch (java.io.InterruptedIOException e){
                             System.out.println("esperando respuetas");
                         }
@@ -106,6 +117,23 @@ public class GamerServer implements Registro{
     public static void darPunto(int idPlayer){
         Player play = players.get(idPlayer);
         play.setPuntuacion(play.getPuntuacion()+1);
+    }
+
+    public static Player checarGanador(){
+        Player ganador = null;
+        for(Map.Entry<Integer,Player> entry : players.entrySet()){
+            Player player = entry.getValue();
+            if(player.getPuntuacion()==puntuacionGanadora){
+                ganador =  player;
+            }
+        }
+        return ganador;
+    }
+
+    public static void reiniciarPartida(){
+        for(Map.Entry<Integer,Player> entry : players.entrySet()){
+            entry.getValue().setPuntuacion(0);
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package client;
 
+import frontend.Ganador;
 import frontend.RegistroJugador;
 import frontend.Tablero;
 import interfaces.Player;
@@ -53,9 +54,21 @@ public class GameClient {
                 tablero.setAccion(false);
                 String data = new String(messageIn.getData(), 0, messageIn.getLength());
                 //actualizar tablero
-                tablero.seleccionar(data);
-                //Esperar respuesta jugador
+                if(data.length()<2){
+                    tablero.seleccionar(data);
+                }else{
+                    System.out.println(data);
+                    Ganador msgGanador = new Ganador();
+                    msgGanador.msgGanador(data);
+                    Thread.sleep(2000);
+                    msgGanador.cerrarMsg();
+                    s.receive(messageIn);
+                    data = new String(messageIn.getData(), 0, messageIn.getLength());
+                    tablero.seleccionar(data);
 
+                }
+
+                //Esperar respuesta jugador
                 long startTime = System.currentTimeMillis();
                 while (!tablero.getAccion() && (System.currentTimeMillis()-startTime)<4000) {
 

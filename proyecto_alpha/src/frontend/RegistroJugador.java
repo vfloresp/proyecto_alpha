@@ -30,6 +30,7 @@ public class RegistroJugador extends JFrame{
 
         setSize(300,300);
         setVisible(true);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
