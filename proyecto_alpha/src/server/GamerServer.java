@@ -54,7 +54,7 @@ public class GamerServer implements Registro{
             //VARIABLES TCPSERVER
             int serverPort = 7896;
             ServerSocket listenSocket = new ServerSocket(serverPort);
-            listenSocket.setSoTimeout(500);
+            listenSocket.setSoTimeout(5000);
 
 
             //Enviar cada 5s un nuevo monstruo
@@ -79,19 +79,24 @@ public class GamerServer implements Registro{
                     s.send(messageOut);
                     System.out.println("mensaje enviado: " + message);
                     long startTime = System.currentTimeMillis();
-                    while((System.currentTimeMillis()-startTime)<5000) {
-                        try {
-                            Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
-                            Connection c = new Connection(clientSocket);
-                            c.start();
-                            while(c.getIdPlayer() == -1){
-                            }
-                            System.out.println("respuesta run " +c.getIdPlayer());
-                            if(c.getIdPlayer() != 0)
-                                darPunto(c.getIdPlayer());
-                        }catch (java.io.InterruptedIOException e){
-                            System.out.println("esperando respuetas");
+
+
+                    try {
+                        Socket clientSocket = listenSocket.accept(); // Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
+                        Connection c = new Connection(clientSocket);
+                        c.start();
+                        while(c.getIdPlayer() == -1){
+                            sleep(10);
                         }
+                        System.out.println("respuesta run " +c.getIdPlayer());
+                        if(c.getIdPlayer() != 0)
+                            darPunto(c.getIdPlayer());
+                    }catch (java.io.InterruptedIOException e){
+                        System.out.println("Interrupcion timeout");
+                    }
+
+                    while((System.currentTimeMillis()-startTime)<5000) {
+                        sleep(10);
                     }
                 }
             }
